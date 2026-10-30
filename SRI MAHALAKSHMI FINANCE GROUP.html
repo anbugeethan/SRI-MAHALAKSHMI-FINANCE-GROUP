@@ -1,0 +1,332 @@
+<title>Sri Mahalakshmi Finance</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky top bar with 3 tabs; ledger-style tables; summary first, detail below */
+:root{
+  --bg:#f5f4ef; --surface:#fffefb; --ink:#1b2430; --muted:#667085; --line:#ddd9cc;
+  --accent:#1f4e5f; --accent-ink:#ffffff; --gold:#c8871b; --good:#2f7d4f; --warn:#b4531c; --input:#fff7dc; --bar:#1f4e5f; --bar2:#b9cdd4;
+  --f-display:'Bricolage Grotesque',system-ui,sans-serif; --f-body:'IBM Plex Sans',system-ui,sans-serif; --f-mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10171c;--surface:#171f26;--ink:#e8ecef;--muted:#93a1ad;--line:#2b3640;--accent:#6fb3c8;--accent-ink:#0c1418;--gold:#e5a948;--good:#5ec58a;--warn:#f08a54;--input:#2a2614;--bar:#6fb3c8;--bar2:#2e4651;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#10171c;--surface:#171f26;--ink:#e8ecef;--muted:#93a1ad;--line:#2b3640;--accent:#6fb3c8;--accent-ink:#0c1418;--gold:#e5a948;--good:#5ec58a;--warn:#f08a54;--input:#2a2614;--bar:#6fb3c8;--bar2:#2e4651;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+.wrap{max-width:1180px;margin:0 auto}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 24px;padding-block:22px 12px}
+h1{font:700 26px/1.1 var(--f-display);margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--muted);font-size:13px;margin-top:4px}
+nav{display:flex;gap:4px;border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:5;overflow-x:auto}
+nav a{padding:10px 16px;color:var(--muted);text-decoration:none;font-weight:500;border-bottom:3px solid transparent;white-space:nowrap}
+nav a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--gold)}
+nav a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.status{font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--good)} .dot.off{background:var(--warn)}
+main{padding-top:20px;display:grid;gap:22px}
+h2{font:700 17px/1.2 var(--f-display);margin:0 0 10px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--line);padding:14px 16px;border-radius:6px;min-width:0}
+.kpi .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.kpi .v{font:500 22px/1.3 var(--f-mono);font-variant-numeric:tabular-nums;margin-top:2px;overflow-wrap:anywhere}
+.kpi.hero{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)} .kpi.hero .l{color:inherit;opacity:.8}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px;min-width:0}
+.two{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:16px} @media(max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
+.scroll{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;background:var(--bg);position:sticky;top:0}
+th:first-child,td:first-child,.l{text-align:left} td.num,th.num{font-family:var(--f-mono)}
+tfoot td{font-weight:600;background:var(--bg);font-family:var(--f-mono)}
+td.name{text-align:left}
+input,select{font:inherit;color:var(--ink);background:var(--input);border:1px solid var(--line);border-radius:4px;padding:4px 6px;min-width:0}
+td input[type=number]{width:92px;text-align:right;font-family:var(--f-mono)} td input[type=text]{width:140px} td input[type=date]{width:136px} td input.sm{width:64px}
+input:disabled,select:disabled{background:transparent;border-color:transparent}
+.m0{color:var(--muted);opacity:.55}
+.future{color:var(--muted);font-style:italic}
+button{font:500 13px var(--f-body);padding:7px 12px;border-radius:5px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+button.p{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.x{padding:3px 8px;color:var(--warn)}
+.bar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;margin-bottom:10px}
+.bar label{display:flex;gap:6px;align-items:center;color:var(--muted)}
+.note{color:var(--muted);font-size:12.5px;max-width:78ch}
+svg text{fill:var(--muted);font:11px var(--f-mono)}
+#authform .panel{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center} #authform input{background:var(--surface);width:170px} .lockchip{font-size:12px;border:1px solid var(--line);border-radius:99px;padding:1px 9px;color:var(--muted)}
+.pill{display:inline-block;padding:1px 8px;border-radius:99px;font-size:11.5px;border:1px solid var(--line)}
+.pill.on{color:var(--good);border-color:var(--good)} .pill.done{color:var(--muted)}
+</style>
+
+<div class="wrap">
+<header>
+  <div><h1>Sri Mahalakshmi Finance Group</h1><div class="sub">Member investments, loans and monthly interest · Year 2026</div></div>
+  <div class="status"><span class="dot" id="dot"></span><span id="stat">Loading…</span><span id="authbar" style="display:flex;gap:6px;align-items:center;margin-left:8px"></span></div>
+</header>
+<nav aria-label="Pages">
+  <a href="#dashboard" data-p="dashboard">Dashboard</a>
+  <a href="#investments" data-p="investments">Investments</a>
+  <a href="#loans" data-p="loans">Loans</a>
+</nav>
+<div id="authform"></div>
+<main id="app"></main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const SEED={"asOf": "2026-09-30", "invRate": 2, "investors": [{"name": "Ramakrishnan", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}, {"name": "Thaarugan", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}, {"name": "Vinoth", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}, {"name": "Pitchaimani", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}, {"name": "Surya", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}, {"name": "Onnappan", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}, {"name": "Balamanikandan", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}, {"name": "Selvakumar", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}, {"name": "Karthick", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}, {"name": "Anbugeethan", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}, {"name": "Vignesh", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}, {"name": "Yadhavan", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}, {"name": "Saravanan", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}, {"name": "Kamalakannan", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}, {"name": "Damodaran", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}, {"name": "Hariprasanna", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}, {"name": "Vishnu", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}, {"name": "Bharathikannan", "m": [0, 0, 0, 0, 0, 10000, 30000, 0, 25000, 0, 0, 0]}], "loans": [{"name": "Balamanikandan", "channel": "Personal", "amount": 100000, "rate": 2.0, "start": "2026-06-01", "end": "2026-12-31", "repaid": 0, "repaidDate": ""}, {"name": "Balamanikandan", "channel": "Personal", "amount": 300000, "rate": 2.0, "start": "2026-07-15", "end": "2026-12-31", "repaid": 0, "repaidDate": ""}, {"name": "Kamalakannan", "channel": "Personal", "amount": 30000, "rate": 2.0, "start": "2026-06-08", "end": "2026-12-31", "repaid": 0, "repaidDate": ""}, {"name": "Pichamani", "channel": "Personal", "amount": 100000, "rate": 2.0, "start": "2026-07-04", "end": "2026-12-31", "repaid": 0, "repaidDate": ""}, {"name": "Pichamani", "channel": "Personal", "amount": 100000, "rate": 2.0, "start": "2026-09-15", "end": "2026-12-31", "repaid": 0, "repaidDate": ""}, {"name": "Damodaran", "channel": "Personal", "amount": 30000, "rate": 2.5, "start": "2026-07-15", "end": "2026-09-01", "repaid": 30000, "repaidDate": "2026-09-01"}, {"name": "Damodaran", "channel": "Personal", "amount": 100000, "rate": 2.0, "start": "2026-08-09", "end": "2026-12-31", "repaid": 0, "repaidDate": ""}, {"name": "Damodaran", "channel": "Personal", "amount": 30000, "rate": 2.0, "start": "2026-09-23", "end": "2026-12-31", "repaid": 0, "repaidDate": ""}, {"name": "Surya", "channel": "Personal", "amount": 10000, "rate": 2.0, "start": "2026-08-03", "end": "2026-12-31", "repaid": 0, "repaidDate": ""}, {"name": "Vignesh", "channel": "Personal", "amount": 100000, "rate": 2.0, "start": "2026-09-15", "end": "2026-12-31", "repaid": 0, "repaidDate": ""}, {"name": "Saravanan", "channel": "Personal", "amount": 100000, "rate": 2.0, "start": "2026-09-15", "end": "2026-12-31", "repaid": 0, "repaidDate": ""}, {"name": "Saravanan", "channel": "Personal", "amount": 100000, "rate": 2.0, "start": "2026-09-29", "end": "2026-12-31", "repaid": 0, "repaidDate": ""}, {"name": "Kamalakannan", "channel": "madhanprabhu", "amount": 15000, "rate": 2.0, "start": "2026-09-26", "end": "2026-12-31", "repaid": 0, "repaidDate": ""}, {"name": "Kamalakannan", "channel": "Bala", "amount": 50000, "rate": 2.0, "start": "2026-09-29", "end": "2026-12-31", "repaid": 0, "repaidDate": ""}]};
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const YEAR=2026;
+const FIXED_AUTH={salt:'smfg2026',hash:'ba93176575fdf5f6df68b48ff57ff61e120dd3ef5e8c0ff4bb0e427b7ce2cc5d'};
+let S=JSON.parse(JSON.stringify(SEED));S.auth=FIXED_AUTH;
+const $=(s,r=document)=>r.querySelector(s);
+const inr=n=>'₹'+Math.round(n||0).toLocaleString('en-IN');
+const num=n=>Math.round(n||0).toLocaleString('en-IN');
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const U=s=>{const[a,b,c]=s.split('-').map(Number);return Date.UTC(a,b-1,c)};
+const DAY=864e5;
+
+/* ---------- calculations (same rules as the Excel sheet) ---------- */
+function monthInterest(L,mi){
+  if(!L.name||!L.start) return null;
+  const ms=Date.UTC(YEAR,mi,1), me=Date.UTC(YEAR,mi+1,0);
+  const st=U(L.start); if(st>me) return null;
+  const end=L.end?U(L.end):U(S.asOf);
+  if(end<ms) return 0;
+  const dim=(me-ms)/DAY+1;
+  const days=Math.max(0,(Math.min(me,end)-Math.max(ms,st))/DAY+1);
+  return Math.round(L.amount*L.rate/100*days/dim);
+}
+function loanCalc(L){
+  const m=MON.map((_,i)=>monthInterest(L,i));
+  const asOf=U(S.asOf); let tot=0,till=0,pend=0;
+  m.forEach((v,i)=>{if(v==null)return;tot+=v;(Date.UTC(YEAR,i,1)<=asOf)?till+=v:pend+=v});
+  return{m,tot,till,pend};
+}
+function totals(){
+  const principal=S.investors.reduce((a,r)=>a+r.m.reduce((x,y)=>x+(+y||0),0),0);
+  const lent=S.loans.reduce((a,l)=>a+(+l.amount||0)-(+l.repaid||0),0);
+  let till=0,proj=0; const monthly=Array(12).fill(0);
+  S.loans.forEach(l=>{const c=loanCalc(l);till+=c.till;proj+=c.tot;c.m.forEach((v,i)=>monthly[i]+=v||0)});
+  return{principal,lent,balance:principal-lent,till,proj,monthly,count:S.investors.length,
+    estInv:principal*S.invRate/100,repaid:S.loans.reduce((a,l)=>a+(+l.repaid||0),0)};
+}
+
+/* ---------- saving: shared database when available, else this browser ---------- */
+let doc=null,saveT=null,mode='local';
+const LS='smfg-state-v1';
+function setStatus(t,ok=true){$('#stat').textContent=t;$('#dot').className='dot'+(ok?'':' off')}
+function save(){
+  try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}
+  clearTimeout(saveT);
+  saveT=setTimeout(async()=>{
+    if(!doc){setStatus('Saved in this browser only',false);return}
+    try{await doc.set({json:JSON.stringify(S)});setStatus('Saved · shared with everyone who opens this page')}
+    catch(e){setStatus('Could not save to the shared database ('+(e.code||'error')+')',false)}
+  },500);
+}
+async function initStore(){
+  let local=null;try{local=JSON.parse(localStorage.getItem(LS))}catch(e){}
+  if(local&&local.investors) S=local;S.auth=FIXED_AUTH;
+  render();
+  try{
+    const db=await claude.use('db');
+    if(!db){setStatus('Saved in this browser only',false);return}
+    doc=db.doc('app/state');
+    doc.onSnapshot(snap=>{
+      if(snap.exists){
+        try{const r=JSON.parse(snap.data().json);r.auth=FIXED_AUTH;
+          if(JSON.stringify(r)!==JSON.stringify(S)&&!snap.metadata.hasPendingWrites&&!(document.activeElement&&document.activeElement.closest('main input'))){S=r;render()}}catch(e){}
+        setStatus('Shared database connected');
+      }else{ doc.set({json:JSON.stringify(S)}).then(()=>setStatus('Shared database connected')).catch(()=>setStatus('Shared database is read-only for you',false)); }
+    },e=>setStatus('Shared database unavailable ('+e.code+')',false));
+  }catch(e){setStatus('Saved in this browser only',false)}
+}
+
+/* ---------- export / import ---------- */
+async function saveFile(name,data){
+  try{const d=await claude.use('downloads'); if(d){await d.save({filename:name,data});return}}catch(e){if(e&&e.code==='declined')return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(data instanceof Blob?data:new Blob([data]));a.download=name;a.click();
+}
+function exportXlsx(){
+  const wb=XLSX.utils.book_new();
+  const inv=[['No.','Investor',...MON.map(m=>m+'-26'),'Principal (₹)','Est. interest (₹)']];
+  S.investors.forEach((r,i)=>{const p=r.m.reduce((a,b)=>a+(+b||0),0);inv.push([i+1,r.name,...r.m,p,p*S.invRate/100])});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(inv),'Investments');
+  const ln=[['Loan No.','Borrower','Channel','Amount (₹)','Rate %/month','Start','End',...MON.map(m=>m+'-26'),'Total interest','Interest till date','Pending interest','Principal repaid','Repaid on']];
+  S.loans.forEach((l,i)=>{const c=loanCalc(l);ln.push([i+1,l.name,l.channel,l.amount,l.rate,l.start,l.end,...c.m.map(v=>v==null?'':v),c.tot,c.till,c.pend,l.repaid||0,l.repaidDate])});
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(ln),'Loans');
+  const out=XLSX.write(wb,{bookType:'xlsx',type:'array'});
+  saveFile('Sri_Mahalakshmi_Finance_2026.xlsx',new Blob([out],{type:'application/octet-stream'}));
+}
+function exportJson(){saveFile('finance-backup.json',new Blob([JSON.stringify(S,null,1)],{type:'application/json'}))}
+function importJson(file){
+  const fr=new FileReader();fr.onload=()=>{try{const r=JSON.parse(fr.result);if(!r.investors||!r.loans)throw 0;r.auth=FIXED_AUTH;S=r;save();render()}catch(e){setStatus('That file is not a backup from this site',false)}};fr.readAsText(file);
+}
+
+/* ---------- pages ---------- */
+function chart(monthly){
+  const W=640,H=230,pl=48,pb=26,pt=12,mx=Math.max(...monthly,1);
+  const step=Math.pow(10,Math.floor(Math.log10(mx)));let top=Math.ceil(mx/step)*step;
+  const bw=(W-pl-8)/12, asM=new Date(S.asOf).getUTCMonth();
+  let g='';
+  for(let i=0;i<=4;i++){const v=top*i/4,y=H-pb-(H-pb-pt)*i/4;g+=`<line x1="${pl}" x2="${W-4}" y1="${y}" y2="${y}" stroke="var(--line)"/><text x="${pl-6}" y="${y+4}" text-anchor="end">${v>=1000?(v/1000)+'k':v}</text>`}
+  monthly.forEach((v,i)=>{const h=(H-pb-pt)*v/top,x=pl+i*bw+bw*.18,y=H-pb-h;
+    g+=`<rect x="${x}" y="${y}" width="${bw*.64}" height="${h}" fill="${i<=asM?'var(--bar)':'var(--bar2)'}"><title>${MON[i]}: ${inr(v)}</title></rect><text x="${x+bw*.32}" y="${H-8}" text-anchor="middle">${MON[i]}</text>`});
+  return `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Interest by month">${g}</svg>`;
+}
+function dashboard(){
+  const t=totals();
+  const by={};S.loans.forEach(l=>{if(!l.name)return;const c=loanCalc(l);const b=by[l.name]||(by[l.name]={n:0,out:0,till:0,pend:0});b.n++;b.out+=(+l.amount||0)-(+l.repaid||0);b.till+=c.till;b.pend+=c.pend});
+  const rows=Object.entries(by).sort((a,b)=>b[1].out-a[1].out).map(([k,b])=>`<tr><td class="name">${esc(k)}</td><td>${b.n}</td><td class="num">${num(b.out)}</td><td class="num">${num(b.till)}</td><td class="num">${num(b.pend)}</td></tr>`).join('');
+  const asOf=new Date(S.asOf).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+  return `
+  <div class="bar"><label>As of date <input type="date" id="asof" value="${S.asOf}"></label><span class="note">Interest up to this date counts as earned. Update before the 5th of every month.</span></div>
+  <section class="kpis">
+    <div class="kpi hero"><div class="l">Total pool</div><div class="v">${inr(t.principal)}</div></div>
+    <div class="kpi"><div class="l">Loaned out</div><div class="v">${inr(t.lent)}</div></div>
+    <div class="kpi"><div class="l">Balance in hand</div><div class="v">${inr(t.balance)}</div></div>
+    <div class="kpi"><div class="l">Interest till ${asOf}</div><div class="v">${inr(t.till)}</div></div>
+    <div class="kpi"><div class="l">Projected interest 2026</div><div class="v">${inr(t.proj)}</div></div>
+    <div class="kpi"><div class="l">Estimated profit per member</div><div class="v">${inr(t.count?t.proj/t.count:0)}</div></div>
+  </section>
+  <div class="two">
+    <section class="panel"><h2>Interest by month</h2>${chart(t.monthly)}<div class="note">Dark bars are months up to the as-of date. Light bars are still to come.</div></section>
+    <section class="panel"><h2>Balance sheet</h2>
+      <table><tbody>
+      <tr><td class="name">Total invested</td><td class="num">${inr(t.principal)}</td></tr>
+      <tr><td class="name">Total loan distributed</td><td class="num">${inr(t.lent)}</td></tr>
+      <tr><td class="name">Principal collected back</td><td class="num">${inr(t.repaid)}</td></tr>
+      <tr><td class="name">Balance principal remaining</td><td class="num">${inr(t.balance)}</td></tr>
+      <tr><td class="name">Interest till date</td><td class="num">${inr(t.till)}</td></tr>
+      <tr><td class="name">Projected interest 2026</td><td class="num">${inr(t.proj)}</td></tr>
+      <tr><td class="name"><b>Principal + interest till date</b></td><td class="num"><b>${inr(t.principal+t.till)}</b></td></tr>
+      </tbody></table></section>
+  </div>
+  <section><h2>Borrowers</h2><div class="scroll"><table><thead><tr><th>Borrower</th><th>Loans</th><th>Outstanding (₹)</th><th>Interest till date (₹)</th><th>Pending interest (₹)</th></tr></thead><tbody>${rows||'<tr><td colspan="5" class="name">No loans yet. Add one on the Loans page.</td></tr>'}</tbody></table></div></section>
+  <section class="panel"><h2>Backup and Excel</h2><div class="bar">
+    <button class="p" id="bx">Download Excel</button><button id="bj">Download backup</button>
+    <button id="bi">Restore backup…</button><input type="file" id="fi" accept=".json" hidden>
+    <button id="br">Reset to starting data</button><span id="rc" class="note"></span></div>
+    <div class="note">Excel download gives the Investments and Loans sheets with the interest worked out. Backup files can be restored here later.</div></section>`;
+}
+function invPage(){
+  const rows=S.investors.map((r,i)=>`<tr data-i="${i}"><td>${i+1}</td><td class="name"><input type="text" data-f="name" value="${esc(r.name)}"></td>${r.m.map((v,k)=>`<td><input type="number" min="0" step="500" data-k="${k}" value="${v||''}" placeholder="0"></td>`).join('')}<td class="num p-t"></td><td class="num p-e"></td><td><button class="x" data-del="${i}" title="Remove">✕</button></td></tr>`).join('');
+  return `<div class="bar"><label>Interest estimate rate <input class="sm" style="width:64px" type="number" step="0.1" id="irate" value="${S.invRate}">% per month</label><button class="p" id="addinv">Add member</button></div>
+  <div class="note">Enter the amount each member put in during each month. Yellow cells can be edited. The estimate is the rate times each member's principal, as in your sheet.</div>
+  <div class="scroll"><table><thead><tr><th>No.</th><th>Member</th>${MON.map(m=>`<th>${m}-26</th>`).join('')}<th>Principal (₹)</th><th>Est. interest (₹)</th><th></th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td></td><td class="name">TOTAL</td>${MON.map((_,k)=>`<td class="ft${k}"></td>`).join('')}<td class="fp"></td><td class="fe"></td><td></td></tr></tfoot></table></div>`;
+}
+function refreshInv(){
+  const colT=Array(12).fill(0);let P=0;
+  document.querySelectorAll('#app tbody tr[data-i]').forEach(tr=>{const r=S.investors[+tr.dataset.i];const p=r.m.reduce((a,b)=>a+(+b||0),0);P+=p;r.m.forEach((v,k)=>colT[k]+=+v||0);
+    tr.querySelector('.p-t').textContent=num(p);tr.querySelector('.p-e').textContent=num(p*S.invRate/100)});
+  colT.forEach((v,k)=>{const c=$('.ft'+k);if(c)c.textContent=v?num(v):'–'});
+  const fp=$('.fp');if(fp){fp.textContent=num(P);$('.fe').textContent=num(P*S.invRate/100)}
+}
+function loansPage(){
+  const rows=S.loans.map((l,i)=>`<tr data-i="${i}"><td>${i+1}</td>
+   <td class="name"><input type="text" data-f="name" value="${esc(l.name)}"></td>
+   <td class="name"><input type="text" data-f="channel" value="${esc(l.channel)}" style="width:100px"></td>
+   <td><input type="number" data-f="amount" min="0" step="1000" value="${l.amount}"></td>
+   <td><input class="sm" type="number" data-f="rate" step="0.1" value="${l.rate}"></td>
+   <td><input type="date" data-f="start" value="${l.start}"></td>
+   <td><input type="date" data-f="end" value="${l.end}"></td>
+   ${MON.map((_,k)=>`<td class="num cm${k}"></td>`).join('')}
+   <td class="num c-tot"></td><td class="num c-till"></td><td class="num c-pend"></td>
+   <td><input type="number" data-f="repaid" min="0" step="1000" value="${l.repaid||''}" placeholder="0"></td>
+   <td><input type="date" data-f="repaidDate" value="${l.repaidDate||''}"></td>
+   <td><button class="x" data-del="${i}" title="Remove">✕</button></td></tr>`).join('');
+  return `<div class="bar"><button class="p" id="addloan">Add loan</button><label>As of date <input type="date" id="asof" value="${S.asOf}"></label></div>
+  <div class="note">Interest runs per day: a loan that starts or closes mid-month is charged only for the days it was active. Leave End date empty for a running loan; it then accrues up to the as-of date. Bold months are on or before the as-of date, italic months are still ahead. Enter a repayment amount when a borrower returns principal, so the pool balance stays right.</div>
+  <div class="scroll"><table><thead><tr><th>No.</th><th>Borrower</th><th>Channel</th><th>Amount (₹)</th><th>Rate %/mo</th><th>Start</th><th>End</th>${MON.map(m=>`<th>${m}-26</th>`).join('')}<th>Total interest</th><th>Till date</th><th>Pending</th><th>Principal repaid</th><th>Repaid on</th><th></th></tr></thead><tbody>${rows}</tbody>
+  <tfoot><tr><td></td><td class="name">TOTAL</td><td></td><td class="fa"></td><td></td><td></td><td></td>${MON.map((_,k)=>`<td class="fm${k}"></td>`).join('')}<td class="ftot"></td><td class="ftill"></td><td class="fpend"></td><td class="frep"></td><td></td><td></td></tr></tfoot></table></div>`;
+}
+function refreshLoans(){
+  const asM=new Date(S.asOf).getUTCMonth();const mt=Array(12).fill(0);let A=0,T=0,Ti=0,Pe=0,R=0;
+  document.querySelectorAll('#app tbody tr[data-i]').forEach(tr=>{const l=S.loans[+tr.dataset.i];const c=loanCalc(l);
+    c.m.forEach((v,k)=>{const td=tr.querySelector('.cm'+k);td.textContent=v==null?'':num(v);td.className='num cm'+k+(v===0?' m0':'')+(v!=null&&k>asM?' future':'');td.style.fontWeight=(v!=null&&k<=asM)?'600':'400';mt[k]+=v||0});
+    tr.querySelector('.c-tot').textContent=num(c.tot);tr.querySelector('.c-till').textContent=num(c.till);tr.querySelector('.c-pend').textContent=num(c.pend);
+    A+=+l.amount||0;T+=c.tot;Ti+=c.till;Pe+=c.pend;R+=+l.repaid||0});
+  const s=(sel,v)=>{const e=$(sel);if(e)e.textContent=num(v)};
+  mt.forEach((v,k)=>s('.fm'+k,v));s('.fa',A);s('.ftot',T);s('.ftill',Ti);s('.fpend',Pe);s('.frep',R);
+}
+
+/* ---------- admin login (view-only until signed in) ---------- */
+let unlocked=false,authMode=null,authMsg='';
+try{unlocked=sessionStorage.getItem('smfg-un')==='1'}catch(e){}
+const locked=()=>!!S.auth&&!unlocked;
+async function hashPw(u,p,salt){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(salt+'|'+u.trim().toLowerCase()+'|'+p));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function setUnlocked(v){unlocked=v;try{sessionStorage.setItem('smfg-un',v?'1':'0')}catch(e){}}
+function renderAuth(){
+  const bar=$('#authbar'),f=$('#authform');
+  bar.innerHTML=unlocked?'<span class="lockchip">Admin</span><button id="alo">Log out</button>'
+    :'<span class="lockchip">View only</span><button class="p" id="al">Admin login</button>';
+  if(authMode==='login')f.innerHTML=`<div class="panel"><b>Admin login</b><input id="au" type="text" placeholder="User name" autocomplete="username"><input id="ap" type="password" placeholder="Password" autocomplete="current-password"><button class="p" id="ago">Log in</button><button id="ac">Cancel</button><span class="note" style="color:var(--warn)">${authMsg}</span></div>`;
+  else if(authMode==='setup')f.innerHTML=`<div class="panel"><b>${S.auth?'Change':'Set'} admin login</b><input id="au" type="text" placeholder="New user name" autocomplete="username"><input id="ap" type="password" placeholder="New password (6+ characters)" autocomplete="new-password"><input id="ap2" type="password" placeholder="Repeat password" autocomplete="new-password"><button class="p" id="asv">Save login</button><button id="ac">Cancel</button><span class="note" style="color:var(--warn)">${authMsg}</span></div>`;
+  else f.innerHTML='';
+}
+function applyLock(){
+  if(!locked())return;
+  document.querySelectorAll('#app input,#app select').forEach(e=>e.disabled=true);
+  document.querySelectorAll('#app .x,#addinv,#addloan,#bi,#br').forEach(e=>e.style.display='none');
+}
+async function authClick(id){
+  if(id==='al'){authMode='login';authMsg=''}
+  else if(id==='as'){authMode='setup';authMsg=''}
+  else if(id==='ac'){authMode=null}
+  else if(id==='alo'){setUnlocked(false);authMode=null;render();return}
+  else if(id==='ago'){
+    const u=$('#au').value,p=$('#ap').value;
+    if(!crypto.subtle){authMsg='Login needs a secure (https) page.'}
+    else if(S.auth&&await hashPw(u,p,S.auth.salt)===S.auth.hash){setUnlocked(true);authMode=null;render();return}
+    else authMsg='Wrong user name or password.';
+  }
+  else if(id==='asv'){
+    const u=$('#au').value.trim(),p=$('#ap').value;
+    if(!u||p.length<6)authMsg='Enter a user name and a password of 6 or more characters.';
+    else if(p!==$('#ap2').value)authMsg='The two passwords are different.';
+    else if(!crypto.subtle)authMsg='Login needs a secure (https) page.';
+    else{const salt=Math.random().toString(36).slice(2)+Date.now();S.auth={salt,hash:await hashPw(u,p,salt)};setUnlocked(true);authMode=null;save();render();return}
+  }
+  renderAuth();
+}
+
+/* ---------- router and events ---------- */
+function render(){
+  const p=(location.hash||'#dashboard').slice(1);const page=['dashboard','investments','loans'].includes(p)?p:'dashboard';
+  document.querySelectorAll('nav a').forEach(a=>a.toggleAttribute('aria-current',a.dataset.p===page)||a.removeAttribute('aria-current'));
+  document.querySelectorAll('nav a').forEach(a=>{if(a.dataset.p===page)a.setAttribute('aria-current','page')});
+  $('#app').innerHTML=page==='dashboard'?dashboard():page==='investments'?invPage():loansPage();
+  if(page==='investments')refreshInv();if(page==='loans')refreshLoans();
+  document.title='Sri Mahalakshmi Finance';
+  renderAuth();applyLock();
+}
+addEventListener('hashchange',()=>{render();scrollTo(0,0)});
+document.addEventListener('change',e=>{
+  const t=e.target;
+  if(t.id==='asof'){if(t.value){S.asOf=t.value;save();render()}return}
+  if(t.id==='irate'){S.invRate=+t.value||0;save();refreshInv();return}
+  if(t.id==='fi'){if(t.files[0])importJson(t.files[0]);return}
+  const tr=t.closest('tr[data-i]');if(!tr)return;
+  const i=+tr.dataset.i;
+  if(S.investors[i]&&location.hash==='#investments'){
+    if(t.dataset.f==='name')S.investors[i].name=t.value;else S.investors[i].m[+t.dataset.k]=+t.value||0;
+    save();refreshInv();
+  }else if(S.loans[i]){
+    const f=t.dataset.f;S.loans[i][f]=t.type==='number'?(+t.value||0):t.value;save();refreshLoans();
+  }
+});
+document.addEventListener('click',e=>{
+  const t=e.target.closest('button');if(!t)return;
+  if(['al','as','ac','alo','ago','asv'].includes(t.id)){authClick(t.id);return}
+  if(t.id==='bx')exportXlsx();
+  else if(t.id==='bj')exportJson();
+  else if(t.id==='bi')$('#fi').click();
+  else if(t.id==='br'){ if(t.dataset.arm){const a=S.auth;S=JSON.parse(JSON.stringify(SEED));S.auth=FIXED_AUTH;save();render()}else{t.dataset.arm=1;t.textContent='Click again to replace all data';t.style.color='var(--warn)'} }
+  else if(t.id==='addinv'){S.investors.push({name:'New member',m:Array(12).fill(0)});save();render()}
+  else if(t.id==='addloan'){S.loans.push({name:'',channel:'Personal',amount:0,rate:2,start:S.asOf,end:'',repaid:0,repaidDate:''});save();render()}
+  else if(t.dataset.del!==undefined){
+    if(t.dataset.arm){(location.hash==='#investments'?S.investors:S.loans).splice(+t.dataset.del,1);save();render()}
+    else{t.dataset.arm=1;t.textContent='Remove?';}
+  }
+});
+if(!location.hash)history.replaceState(null,'','#dashboard');
+initStore();
+</script>
